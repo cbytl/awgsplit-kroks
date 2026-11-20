@@ -24,13 +24,13 @@ AmneziaWG установщик ставит сам из фида [2Grey/awg-open
 
 Зайдите на роутер по SSH (`ssh root@192.168.1.1`) и выполните:
 
-для (OpenWrt 24.10)
+для **OpenWrt 24.10**
 
 Если не установлен wget-ssl то необходимо установить. По SSH (opkg update && opkg install wget-ssl) или через веб интерфейс.
 ```sh
 wget -O /tmp/awgsplit-opkg-online.sh https://raw.githubusercontent.com/cbytl/awgsplit/refs/heads/main/install-opkg-online.sh && sh /tmp/awgsplit-opkg-online.sh
 ```
-для  (OpenWrt 25.12+)
+для  **OpenWrt 25.12+**
 ```sh
 wget -O /tmp/awgsplit-online.sh https://github.com/cbytl/awgsplit/blob/main/install-online.sh && sh /tmp/awgsplit-online.sh
 ```
