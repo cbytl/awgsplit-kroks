@@ -30,7 +30,7 @@ mkdir -p "$BK"
 
 has_nftset() {
 	case " $(dnsmasq --version 2>/dev/null | sed -n 's/^Compile time options: //p') " in
-		*" nftset "*) return 0 ;;
+		*" nftset+ "*) return 0 ;;
 	esac
 	return 1
 }
