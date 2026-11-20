@@ -1,5 +1,5 @@
 #!/bin/sh
-# Установщик awgsplit под opkg (OpenWrt 23.05 / 24.10).
+# Установщик awgsplit под opkg (OpenWrt 24.10).
 # Запускать НА РОУТЕРЕ из распакованной папки.
 #   ./install-opkg.sh            — полная установка
 #   ./install-opkg.sh --no-deps  — только файлы, без установки пакетов
@@ -22,7 +22,7 @@ NODEPS=0
 [ -f /etc/openwrt_release ] || die "Это не OpenWrt"
 . /etc/openwrt_release
 ok "OpenWrt $DISTRIB_RELEASE / $DISTRIB_TARGET"
-command -v opkg >/dev/null 2>&1 || die "opkg не найден: эта версия установщика для OpenWrt до 25.12 (там нужен apk)"
+command -v opkg >/dev/null 2>&1 || die "opkg не найден: эта версия установщика для OpenWrt 24.10"
 [ -f files/usr/bin/awgsplit ] || die "Запускайте install.sh из распакованной папки awgsplit"
 
 BK=/root/awgsplit-backup
