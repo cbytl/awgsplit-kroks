@@ -24,7 +24,7 @@ AmneziaWG установщик ставит сам из фида [2Grey/awg-open
 
 Зайдите на роутер по SSH (`ssh root@192.168.1.1`) и выполните:
 
-для (OpenWrt 23.05 / 24.10)
+для (OpenWrt 24.10)
 
 Если не установлен wget-ssl то необходимо установить. По SSH (opkg update && opkg install wget-ssl) или через веб интерфейс.
 ```sh
