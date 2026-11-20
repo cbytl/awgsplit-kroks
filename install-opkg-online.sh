@@ -1,7 +1,7 @@
 #!/bin/sh
 # Установка awgsplit одной командой на роутере с OpenWrt 24.10:
 #
-#   wget -O /tmp/awgsplit-opkg-online.sh https://raw.githubusercontent.com/cbytl/awgsplit-kroks/refs/heads/main/install-opkg-online.sh && sh /tmp/awgsplit-opkg-online.sh
+#   wget -O /tmp/awgsplit-opkg-online.sh https://github.com/cbytl/awgsplit-kroks/blob/main/install-opkg-online.sh && sh /tmp/awgsplit-opkg-online.sh
 #
 # Скачивает архив репозитория с GitHub и запускает install.sh.
 # Аргументы передаются установщику, например: sh /tmp/awgsplit-opkg-online.sh --no-deps
