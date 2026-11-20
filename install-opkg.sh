@@ -74,8 +74,8 @@ if [ "$NODEPS" = 0 ]; then
 		# dnsmasq-full конфликтует с dnsmasq, поэтому сносим старый и ставим новый
 		# на время замены DNS у роутера нет — подменяем резолвер на внешний
 		cp /etc/resolv.conf "$BK/resolv.conf"
-		echo "nameserver 8.8.8.8" > /etc/resolv.conf
 		opkg remove dnsmasq > "$RB/log" 2>&1
+		echo "nameserver 8.8.8.8" > /etc/resolv.conf
 		opkg install dnsmasq-full >> "$RB/log" 2>&1
 		# восстанавливаем — dnsmasq-full подхватит свои настройки
 		cp "$BK/resolv.conf" /etc/resolv.conf
