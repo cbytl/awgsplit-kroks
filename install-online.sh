@@ -6,7 +6,7 @@
 # Скачивает архив репозитория с GitHub и запускает install.sh.
 # Аргументы передаются установщику, например: sh /tmp/awgsplit-online.sh --no-deps
 
-REPO="${AWGSPLIT_REPO:-cbytl/awgsplit}"
+REPO="${AWGSPLIT_REPO:-cbytl/awgsplit-kroks}"
 REF="${AWGSPLIT_REF:-main}"
 TMP=/tmp/awgsplit-src
 
