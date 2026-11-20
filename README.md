@@ -32,7 +32,7 @@ wget -O /tmp/awgsplit-opkg-online.sh https://github.com/cbytl/awgsplit-kroks/raw
 ```
 для  **OpenWrt 25.12+**
 ```sh
-wget -O /tmp/awgsplit-online.sh https://github.com/cbytl/awgsplit-kroks/blob/main/install-online.sh && sh /tmp/awgsplit-online.sh
+wget -O /tmp/awgsplit-online.sh https://github.com/cbytl/awgsplit-kroks/raw/refs/heads/main/install-online.sh && sh /tmp/awgsplit-online.sh
 ```
 
 Скрипт скачает awgsplit с GitHub и запустит установщик.
