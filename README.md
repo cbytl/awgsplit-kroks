@@ -28,7 +28,7 @@ AmneziaWG установщик ставит сам из фида [2Grey/awg-open
 
 Если не установлен wget-ssl то необходимо установить. По SSH (opkg update && opkg install wget-ssl) или через веб интерфейс.
 ```sh
-wget -O /tmp/awgsplit-opkg-online.sh https://github.com/cbytl/awgsplit-kroks/blob/main/install-opkg-online.sh && sh /tmp/awgsplit-opkg-online.sh
+wget -O /tmp/awgsplit-opkg-online.sh https://github.com/cbytl/awgsplit-kroks/raw/refs/heads/main/install-opkg-online.sh && sh /tmp/awgsplit-opkg-online.sh
 ```
 для  **OpenWrt 25.12+**
 ```sh
