@@ -141,6 +141,7 @@ if [ "$NODEPS" = 0 ]; then
 
 	# Проверяем наличие AmneziaWG и при необходимости устанавливаем.
 	step "AmneziaWG"
+	ok "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
 	if ask_yn "Установить AmneziaWG? "; then
 
 		# после sysupgrade в фиде 2Grey(/etc/opkg/customfeeds.conf) может остаться старая версия OpenWrt — чиним
