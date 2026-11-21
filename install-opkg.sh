@@ -142,17 +142,21 @@ if [ "$NODEPS" = 0 ]; then
 
 	# Проверяем наличие AmneziaWG и при необходимости устанавливаем.
 	step "AmneziaWG"
-	info "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
+	info "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
 	if ask_yn "Установить AmneziaWG? "; then
 
 		# после sysupgrade в фиде 2Grey(/etc/opkg/customfeeds.conf) может остаться старая версия OpenWrt — чиним
 		CF=/etc/opkg/customfeeds.conf
-		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
+		# Формируем адрес репозитория с учётом версии OpenWrt и целевой платформы.
+		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
+		# Проверяем, существует ли файл и есть ли в нём строка с адресом репозитория 2Grey.
 		if [ -f "$CF" ] && grep -q '2grey\.github\.io/awg-openwrt' "$CF"; then
-  		    sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF" ||
+  			# Удаляем все строки, содержащие этот адрес.
+			sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF" ||
      		    die "Не удалось удалить старый фид AmneziaWG"
 		fi
-		echo "src/gz awg-openwrt $FEED" >> "$CF" ||
+		# Формируем адрес репозитория и добавляем его в конец файла, не удаляя существующие записи.
+		printf 'src/gz awg-openwrt %s\n' "$FEED" >> "$CF" ||
    		    die "Не удалось добавить фид AmneziaWG"
 		ok "Фид AmneziaWG добавлен для OpenWrt $DISTRIB_RELEASE"
 
@@ -164,9 +168,11 @@ if [ "$NODEPS" = 0 ]; then
 			warn "Ставлю AmneziaWG из фида 2Grey/awg-openwrt"
 			mkdir -p /etc/opkg/keys
 			# usign-ключ фида: имя файла — ID ключа (проверьте на странице репозитория)
-			if wget -q -O /etc/opkg/keys/5f90c8b31e6d4c5f https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub; then
+			if wget -q -O wget -O /tmp/awg-openwrt-feed.pub "https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"; then
+				opkg-key add /tmp/awg-openwrt-feed.pub
+				rm -f /tmp/awg-openwrt-feed.pub
 				opkg update > /tmp/awgsplit-awg.log 2>&1
-				opkg install kmod-amneziawg amneziawg-tools luci-proto-amneziawg >> /tmp/awgsplit-awg.log 2>&1
+				opkg install amneziawg-tools kmod-amneziawg luci-proto-amneziawg >> /tmp/awgsplit-awg.log 2>&1
 				tail -5 /tmp/awgsplit-awg.log
 				if pkg_installed kmod-amneziawg && pkg_installed amneziawg-tools; then
 					opkg install luci-i18n-amneziawg-ru >/dev/null 2>&1
