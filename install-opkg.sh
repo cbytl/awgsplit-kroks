@@ -128,15 +128,16 @@ if [ "$NODEPS" = 0 ]; then
 
 	if ask_yn "Установить AmneziaWG? "; then
 
-		# ---------------------------------------------------------------- зависимости
+		# после sysupgrade в фиде 2Grey может остаться старая версия OpenWrt — чиним
 		CF=/etc/opkg/customfeeds.conf
 		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
-		# после sysupgrade в фиде 2Grey может остаться старая версия OpenWrt — чиним
 		if [ -f "$CF" ] && grep -q '2grey\.github\.io/awg-openwrt' "$CF"; then
-			sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF"
+  		    sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF" ||
+     		    die "Не удалось удалить старый фид AmneziaWG"
 		fi
-		echo "src/gz awg-openwrt ${FEED}" >> "$CF"
-		ok "Фид AmneziaWG добавлен для $DISTRIB_RELEASE"
+		echo "src/gz awg-openwrt $FEED" >> "$CF" ||
+   		    die "Не удалось добавить фид AmneziaWG"
+		ok "Фид AmneziaWG добавлен для OpenWrt $DISTRIB_RELEASE"
 
 		if [ -f /lib/netifd/proto/amneziawg.sh ] && [ -x /usr/bin/awg ]; then
 			ok "AmneziaWG уже установлен ($(opkg list-installed 2>/dev/null | grep '^amneziawg-tools ' | cut -d' ' -f2))"
