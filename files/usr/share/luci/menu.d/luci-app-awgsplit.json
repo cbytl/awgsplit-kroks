@@ -12,7 +12,7 @@
 	},
 
 	"admin/services/awgsplit/overview": {
-		"title": "Обзор",
+		"title": "Overview",
 		"order": 10,
 		"action": {
 			"type": "view",
@@ -21,7 +21,7 @@
 	},
 
 	"admin/services/awgsplit/tunnels": {
-		"title": "Туннели и списки",
+		"title": "Tunnels and lists",
 		"order": 20,
 		"action": {
 			"type": "view",
@@ -30,7 +30,7 @@
 	},
 
 	"admin/services/awgsplit/import": {
-		"title": "Импорт конфига",
+		"title": "Import .conf",
 		"order": 30,
 		"action": {
 			"type": "view",
@@ -39,7 +39,7 @@
 	},
 
 	"admin/services/awgsplit/diag": {
-		"title": "Диагностика",
+		"title": "Diagnostics",
 		"order": 40,
 		"action": {
 			"type": "view",
