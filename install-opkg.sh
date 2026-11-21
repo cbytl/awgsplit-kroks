@@ -63,7 +63,35 @@ ask_yn() {
 if [ "$NODEPS" = 0 ]; then
 	
 	step "opkg update — обновляем списки доступных пакетов. Это займет некоторое время. Подождите....."
-		opkg update || die "opkg update прошёл с ошибками — пробую дальше"
+		CF=/etc/opkg/customfeeds.conf
+		# Формируем адрес репозитория 2Grey с учётом версии OpenWrt и целевой платформы.
+		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
+		# Проверяем, существует ли файл и есть ли в нём строка с адресом репозитория 2Grey.
+		if [ -f "$CF" ] && grep -q '2grey\.github\.io/awg-openwrt' "$CF"; then
+  			# Удаляем все строки, содержащие этот адрес.
+			sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF" ||
+     		    die "Не удалось удалить старый фид AmneziaWG"
+		fi
+		#--------------------------------------------------------------------------------------------------------
+		# Формируем адрес репозитория и добавляем его в конец файла, не удаляя существующие записи.
+		printf 'src/gz awg %s\n' "$FEED" >> "$CF" ||
+   		    die "Не удалось добавить фид AmneziaWG"
+		ok "Фид AmneziaWG добавлен для OpenWrt $DISTRIB_RELEASE"
+  		#--------------------------------------------------------------------------------------------------------
+		# Добавления ключа
+		if wget -q -O /tmp/awg-openwrt-feed.pub "https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"; then
+			[ -s /tmp/awg-openwrt-feed.pub ] || die "Скачанный ключ AmneziaWG пустой"
+			if opkg-key add /tmp/awg-openwrt-feed.pub; then
+       			ok "Ключ репозитория AmneziaWG добавлен"
+   			else
+       			rm -f /tmp/awg-openwrt-feed.pub
+       			die "Не удалось добавить ключ репозитория AmneziaWG"
+   			fi
+			rm -f /tmp/awg-openwrt-feed.pub
+		else
+			die "Не скачался ключ фида 2Grey — проверьте интернет. Инструкция: https://github.com/2Grey/awg-openwrt"
+		fi
+		opkg update || die "opkg update прошёл с ошибками"
 	
 	step "dnsmasq-full"
 	DHCP="/etc/config/dhcp"
@@ -144,34 +172,7 @@ if [ "$NODEPS" = 0 ]; then
 	step "AmneziaWG"
 	info "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
 	if ask_yn "Установить AmneziaWG? "; then
-		CF=/etc/opkg/customfeeds.conf
-		# Формируем адрес репозитория с учётом версии OpenWrt и целевой платформы.
-		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
-		# Проверяем, существует ли файл и есть ли в нём строка с адресом репозитория 2Grey.
-		if [ -f "$CF" ] && grep -q '2grey\.github\.io/awg-openwrt' "$CF"; then
-  			# Удаляем все строки, содержащие этот адрес.
-			sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF" ||
-     		    die "Не удалось удалить старый фид AmneziaWG"
-		fi
-		#--------------------------------------------------------------------------------------------------------
-		# Формируем адрес репозитория и добавляем его в конец файла, не удаляя существующие записи.
-		printf 'src/gz awg %s\n' "$FEED" >> "$CF" ||
-   		    die "Не удалось добавить фид AmneziaWG"
-		ok "Фид AmneziaWG добавлен для OpenWrt $DISTRIB_RELEASE"
-  		#--------------------------------------------------------------------------------------------------------
-		# Добавления ключа
-		if wget -q -O /tmp/awg-openwrt-feed.pub "https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"; then
-			[ -s /tmp/awg-openwrt-feed.pub ] || die "Скачанный ключ AmneziaWG пустой"
-			if opkg-key add /tmp/awg-openwrt-feed.pub; then
-       			ok "Ключ репозитория AmneziaWG добавлен"
-   			else
-       			rm -f /tmp/awg-openwrt-feed.pub
-       			die "Не удалось добавить ключ репозитория AmneziaWG"
-   			fi
-			rm -f /tmp/awg-openwrt-feed.pub
-		else
-			die "Не скачался ключ фида 2Grey — проверьте интернет. Инструкция: https://github.com/2Grey/awg-openwrt"
-		fi
+
 		#--------------------------------------------------------------------------------------------------------
 		if [ -f /lib/netifd/proto/amneziawg.sh ] && [ -x /usr/bin/awg ]; then
 			ok "AmneziaWG уже установлен ($(opkg list-installed 2>/dev/null | grep '^amneziawg-tools ' | cut -d' ' -f2))"
