@@ -14,7 +14,7 @@ AWG3.1 нет обходимости.
 
 | Что | Комментарий |
 |---|---|
-| Роутер с **OpenWrt 24.10 или OpenWrt 25.12+** | нужен менеджер пакетов `opkg` или `apk` соответственно. Проверено на Kroks kndrt41r1 (MediaTek MT7621) |
+| Роутер с **OpenWrt 24.10** | нужен менеджер пакетов `opkg` . Проверено на Kroks kndrt41r1 (MediaTek MT7621) |
 | Сервер **AmneziaWG** и клиентский `.conf` для роутера | например, свой сервер через приложение AmneziaVPN. Каждому соединению — свой профиль |
 | Интернет на роутере во время установки | ставятся `dnsmasq-full`, AmneziaWG(по желанию) и списки |
 | Около 3 МБ свободного места | плюс пакеты AmneziaWG и dnsmasq-full |
@@ -34,10 +34,6 @@ AmneziaWG установщик ставит сам из фида [2Grey/awg-open
 Если не установлен wget-ssl то необходимо установить. По SSH (opkg update && opkg install wget-ssl) или через веб интерфейс.
 ```sh
 wget -O /tmp/awgsplit-opkg-online.sh https://github.com/cbytl/awgsplit-kroks/raw/refs/heads/main/install-opkg-online.sh && sh /tmp/awgsplit-opkg-online.sh
-```
-для  **OpenWrt 25.12+**
-```sh
-wget -O /tmp/awgsplit-online.sh https://github.com/cbytl/awgsplit-kroks/raw/refs/heads/main/install-online.sh && sh /tmp/awgsplit-online.sh
 ```
 
 Скрипт скачает awgsplit с GitHub и запустит установщик.
