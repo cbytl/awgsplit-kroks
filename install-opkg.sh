@@ -35,7 +35,7 @@ command -v opkg >/dev/null 2>&1 || die "opkg не найден: эта верс�
 [ -f files/usr/bin/awgsplit ] || die "Запускайте install.sh из распакованной папки awgsplit"
 
 # Задаём постоянный каталог для резервных копий
-BK=/root/awgsplit-backup
+BK="/root/awgsplit-backup"
 mkdir -p "$BK" || die "Не удалось создать каталог резервных копий $BK"
 
 # Функция has_nftset() проверяет, поддерживает ли установленный dnsmasq функцию nftset.
@@ -67,50 +67,72 @@ ask_yn() {
 }
 
 
-
 if [ "$NODEPS" = 0 ]; then
 	
 	step "opkg update — обновляем списки доступных пакетов. Это займет некоторое время. Подождите....."
 		opkg update || warn "opkg update прошёл с ошибками — пробую дальше"
 	
 	step "dnsmasq-full"
-	if has_nftset; then
-		ok "dnsmasq уже умеет nftset"
+	DHCP="/etc/config/dhcp"
+	DHCP_BAK="${BK}/dhcp.before-dnsmasq-full"
+	# Проверяем, установлен ли dnsmasq-full
+	if opkg list-installed 2>/dev/null | grep -q '^dnsmasq-full '; then
+	    ok "dnsmasq-full уже установлен"
 	else
-		warn "Меняю dnsmasq на dnsmasq-full (настройки DHCP/DNS сохраняются)"
-		cp /etc/config/dhcp "$BK/dhcp" || die "Не смог сохранить /etc/config/dhcp"
-		RB=/tmp/awgsplit-rollback
-		rm -rf "$RB"; mkdir -p "$RB"
-		# копия старого dnsmasq для отката — ДО удаления (opkg download кладёт .ipk в текущий каталог)
-		( cd "$RB" && opkg download dnsmasq >/dev/null 2>&1 ) || warn "Не смог сохранить копию dnsmasq для отката"
-		# dnsmasq-full конфликтует с dnsmasq, поэтому сносим старый и ставим новый
-		# на время замены DNS у роутера нет — подменяем резолвер на внешний
-		cp /etc/resolv.conf "$BK/resolv.conf"
-		opkg remove dnsmasq > "$RB/log" 2>&1
-		echo "nameserver 8.8.8.8" > /etc/resolv.conf
-		opkg install dnsmasq-full >> "$RB/log" 2>&1
-		# восстанавливаем — dnsmasq-full подхватит свои настройки
-		cp "$BK/resolv.conf" /etc/resolv.conf
-		tail -5 "$RB/log"
-		if pkg_installed dnsmasq-full && has_nftset; then
-			cp "$BK/dhcp" /etc/config/dhcp
-			/etc/init.d/dnsmasq restart >/dev/null 2>&1
-			ok "dnsmasq-full установлен"
-		else
-			err "dnsmasq-full не встал — откатываю"
-			pkg_installed dnsmasq-full && opkg remove dnsmasq-full >/dev/null 2>&1
-			if ! pkg_installed dnsmasq; then
-				ls "$RB"/dnsmasq_*.ipk >/dev/null 2>&1 && opkg install "$RB"/dnsmasq_*.ipk >/dev/null 2>&1
+    	# Сохраняем конфигурацию DHCP
+    	[ -f "${DHCP}" ] || die "Не найден файл ${DHCP}"
+   		cp -p "${DHCP}" "${DHCP_BAK}" || die "Не удалось сохранить конфигурацию DHCP"
+		ok "Конфигурация DHCP сохранена: ${DHCP_BAK}"
+	    # Запоминаем, был ли установлен обычный dnsmasq
+ 	   	DNSMASQ_OLD=0
+ 	   	if opkg list-installed 2>/dev/null | grep -q '^dnsmasq '; then
+  	      DNSMASQ_OLD=1
+ 	   	fi
+	    # Заранее загружаем dnsmasq-full и его зависимости
+ 	   	if ! opkg install --download-only dnsmasq-full; then
+        	die "Не удалось загрузить dnsmasq-full и его зависимости"
+ 	   	fi
+ 	   	# Удаляем обычный dnsmasq, если он установлен
+ 	   	if [ "${DNSMASQ_OLD}" -eq 1 ]; then
+  	    	if ! opkg remove dnsmasq; then
+	        	die "Не удалось удалить обычный dnsmasq"
+ 	       	fi
+	    fi
+	    # Устанавливаем dnsmasq-full
+	    if opkg install dnsmasq-full && opkg list-installed 2>/dev/null | grep -q '^dnsmasq-full '; then
+	    	# Восстанавливаем конфигурацию DHCP
+	        cp -p "${DHCP_BAK}" "${DHCP}" || die "dnsmasq-full установлен, но не удалось восстановить DHCP"
+	        if /etc/init.d/dnsmasq restart; then
+	            ok "dnsmasq-full успешно установлен и запущен"
+			else
+				warn "dnsmasq-full установлен, но служба не перезапустилась"
 			fi
-			cp "$BK/dhcp" /etc/config/dhcp
-			/etc/init.d/dnsmasq enable >/dev/null 2>&1
-			/etc/init.d/dnsmasq restart >/dev/null 2>&1
-			pkg_installed dnsmasq || pkg_installed dnsmasq-full \
-				|| err "dnsmasq не установлен! Верните его: opkg install dnsmasq"
-			die "Установка остановлена. Лог opkg: $RB/log"
-		fi
+		else
+	        err "Не удалось установить dnsmasq-full"
+			# Возвращаем обычный dnsmasq, если он был установлен изначально
+    	    if [ "${DNSMASQ_OLD}" -eq 1 ]; then
+				warn "Пытаюсь восстановить обычный dnsmasq"
+	   	        if opkg install dnsmasq; then
+					if cp -p "${DHCP_BAK}" "${DHCP}" && /etc/init.d/dnsmasq restart; then
+						ok "Обычный dnsmasq восстановлен"
+					else
+						err "dnsmasq установлен, но восстановление конфигурации или запуск не удались"
+    				fi
+				else
+        	        err "Не удалось восстановить обычный dnsmasq"
+				fi
+			fi
+	        die "Замена dnsmasq на dnsmasq-full не выполнена"
+	    fi
 	fi
 
+	
+	
+	
+	
+	
+	
+	
 	# Проверяем наличие nftables и при необходимости устанавливаем пакет.
 	step "nftables"
 	if command -v nft >/dev/null 2>&1; then ok "nftables есть"
