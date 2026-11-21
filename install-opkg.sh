@@ -61,7 +61,10 @@ ask_yn() {
 
 
 if [ "$NODEPS" = 0 ]; then
-
+	
+	step "opkg update — обновляем списки доступных пакетов. Это займет некоторое время. Подождите....."
+		opkg update >/dev/null 2>&1 || warn "opkg update прошёл с ошибками — пробую дальше"
+	
 	step "dnsmasq-full"
 	if has_nftset; then
 		ok "dnsmasq уже умеет nftset"
@@ -70,7 +73,6 @@ if [ "$NODEPS" = 0 ]; then
 		cp /etc/config/dhcp "$BK/dhcp" || die "Не смог сохранить /etc/config/dhcp"
 		RB=/tmp/awgsplit-rollback
 		rm -rf "$RB"; mkdir -p "$RB"
-		opkg update >/dev/null 2>&1 || warn "opkg update прошёл с ошибками — пробую дальше"
 		# копия старого dnsmasq для отката — ДО удаления (opkg download кладёт .ipk в текущий каталог)
 		( cd "$RB" && opkg download dnsmasq >/dev/null 2>&1 ) || warn "Не смог сохранить копию dnsmasq для отката"
 		# dnsmasq-full конфликтует с dnsmasq, поэтому сносим старый и ставим новый
