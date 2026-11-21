@@ -38,14 +38,6 @@ command -v opkg >/dev/null 2>&1 || die "opkg не найден: эта верс�
 BK="/root/awgsplit-backup"
 mkdir -p "$BK" || die "Не удалось создать каталог резервных копий $BK"
 
-# Функция has_nftset() проверяет, поддерживает ли установленный dnsmasq функцию nftset.
-has_nftset() {
-	case " $(dnsmasq --version 2>/dev/null | sed -n 's/^Compile time options: //p') " in
-		*" nftset "*) return 0 ;;
-	esac
-	return 1
-}
-
 # opkg: список установленных в виде «имя версия», ищем точное имя пакета
 pkg_installed() { opkg list-installed 2>/dev/null | grep -q "^$1 "; }
 
