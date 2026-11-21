@@ -6,12 +6,15 @@
 
 cd "$(dirname "$0")" || exit 1
 
+# Управляет цветным выводом сообщений в терминале.
 GREEN=''; RED=''; YELL=''; NC=''
 if [ -t 1 ]; then
 	GREEN='\033[0;32m'; RED='\033[0;31m'; YELL='\033[0;33m'; NC='\033[0m'
 fi
+
+# Набор вспомогательных функций для вывода сообщений установщика
 ok()   { printf "${GREEN}[OK]${NC}   %s\n" "$*"; }
-warn() { printf "${YELL}[!!]${NC}   %s\n" "$*"; }
+warn() { printf "${YELL}[!!!]${NC}   %s\n" "$*"; }
 err()  { printf "${RED}[ERR]${NC}  %s\n" "$*"; }
 step() { printf "\n=== %s ===\n" "$*"; }
 die()  { err "$*"; exit 1; }
