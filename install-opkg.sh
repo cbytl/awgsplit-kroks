@@ -124,11 +124,11 @@ if [ "$NODEPS" = 0 ]; then
 	elif opkg install conntrack >/dev/null 2>&1; then ok "conntrack поставлен"
 	else warn "Не смог поставить conntrack — не страшно, при переключении туннеля соединения переподключатся чуть дольше"; fi
 
+	# Проверяем наличие AmneziaWG и при необходимости устанавливаем.
 	step "AmneziaWG"
-
 	if ask_yn "Установить AmneziaWG? "; then
 
-		# после sysupgrade в фиде 2Grey может остаться старая версия OpenWrt — чиним
+		# после sysupgrade в фиде 2Grey(/etc/opkg/customfeeds.conf) может остаться старая версия OpenWrt — чиним
 		CF=/etc/opkg/customfeeds.conf
 		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
 		if [ -f "$CF" ] && grep -q '2grey\.github\.io/awg-openwrt' "$CF"; then
