@@ -52,11 +52,6 @@ ask_yn() {
 }
 
 
-# ---------------------------------------------------------------- Podkop
-PODKOP=0
-if [ -x /etc/init.d/podkop ] && /etc/init.d/podkop enabled 2>/dev/null; then PODKOP=1; fi
-nft list table inet PodkopTable >/dev/null 2>&1 && PODKOP=1
-
 
 if [ "$NODEPS" = 0 ]; then
 
@@ -207,14 +202,6 @@ fi
 
 # ---------------------------------------------------------------- запуск
 step "Запуск"
-if [ "$PODKOP" = 1 ]; then
-	warn "Работает Podkop — он тоже перехватывает DNS и трафик, вместе они будут мешать друг другу."
-	warn "awgsplit установлен, но НЕ запущен. Когда будете готовы перейти:"
-	warn "  /etc/init.d/podkop stop && /etc/init.d/podkop disable"
-	warn "  opkg remove luci-app-podkop podkop"
-	warn "  (sing-box удаляйте, только если он больше ни для чего не нужен)"
-	warn "  затем: /etc/init.d/awgsplit enable && /etc/init.d/awgsplit start"
-else
 	D='dhcp.@dnsmasq[0]'
 	if uci -q get "$D.server" | grep -q '127\.0\.0\.42'; then
 		cp /etc/config/dhcp "$BK/dhcp.podkop"
@@ -231,7 +218,6 @@ else
 	/etc/init.d/awgsplit enable && ok "Автозапуск включён"
 	/etc/init.d/awgsplit stop >/dev/null 2>&1
 	/etc/init.d/awgsplit start && ok "awgsplit запущен"
-fi
 
 step "Готово"
 cat <<EOF
