@@ -19,6 +19,7 @@ die()  { err "$*"; exit 1; }
 NODEPS=0
 [ "$1" = "--no-deps" ] && NODEPS=1
 
+# Выполняем предварительную проверку системы перед установкой.
 [ -f /etc/openwrt_release ] || die "Это не OpenWrt"
 . /etc/openwrt_release
 ok "OpenWrt $DISTRIB_RELEASE / $DISTRIB_TARGET"
