@@ -25,9 +25,11 @@ ok "OpenWrt $DISTRIB_RELEASE / $DISTRIB_TARGET"
 command -v opkg >/dev/null 2>&1 || die "opkg не найден: эта версия установщика для OpenWrt 24.10"
 [ -f files/usr/bin/awgsplit ] || die "Запускайте install.sh из распакованной папки awgsplit"
 
+# Папка для бэкапа
 BK=/root/awgsplit-backup
 mkdir -p "$BK"
 
+# Функция has_nftset() проверяет, поддерживает ли установленный dnsmasq функцию nftset.
 has_nftset() {
 	case " $(dnsmasq --version 2>/dev/null | sed -n 's/^Compile time options: //p') " in
 		*" nftset "*) return 0 ;;
@@ -38,17 +40,18 @@ has_nftset() {
 # opkg: список установленных в виде «имя версия», ищем точное имя пакета
 pkg_installed() { opkg list-installed 2>/dev/null | grep -q "^$1 "; }
 
+# Функция ask_yn() запрашивает у пользователя ответ «да/нет» и возвращает код завершения в зависимости от ответа.
 ask_yn() {
-	printf "%s [y/n]: " "$1"
-	while true; do
-		read answer || { echo; return 1; }
-		answer=$(printf '%s' "$answer" | tr 'A-Z' 'a-z')
-		case "$answer" in
-			y|yes|да) return 0 ;;
-			n|no|нет) return 1 ;;
-			*) printf "Ответьте y или n: " ;;
-		esac
-	done
+    printf "%s [y/n]: " "$1"
+    while true; do
+        read -r answer || { echo; return 1; }
+        answer=$(printf '%s' "$answer" | tr 'A-Z' 'a-z')
+        case "$answer" in
+            y|yes|да) return 0 ;;
+            n|no|нет) return 1 ;;
+            *) printf "Ответьте y или n: " ;;
+        esac
+    done
 }
 
 
