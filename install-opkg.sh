@@ -101,12 +101,14 @@ if [ "$NODEPS" = 0 ]; then
 		fi
 	fi
 
+	# Проверяем наличие nftables и при необходимости устанавливаем пакет.
 	step "nftables"
 	if command -v nft >/dev/null 2>&1; then ok "nftables есть"
 	elif opkg install nftables >/dev/null 2>&1; then ok "nftables поставлен"
 	else die "Нет nftables и не смог его поставить"; fi
 
 	# conntrack: при переключении туннеля сбрасываем соединения сразу
+	# Проверяем наличие conntrack и при необходимости устанавливаем пакет.
 	if command -v conntrack >/dev/null 2>&1; then ok "conntrack есть"
 	elif opkg install conntrack >/dev/null 2>&1; then ok "conntrack поставлен"
 	else warn "Не смог поставить conntrack — не страшно, при переключении туннеля соединения переподключатся чуть дольше"; fi
