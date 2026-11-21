@@ -144,8 +144,6 @@ if [ "$NODEPS" = 0 ]; then
 	step "AmneziaWG"
 	info "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
 	if ask_yn "Установить AmneziaWG? "; then
-
-		# после sysupgrade в фиде 2Grey(/etc/opkg/customfeeds.conf) может остаться старая версия OpenWrt — чиним
 		CF=/etc/opkg/customfeeds.conf
 		# Формируем адрес репозитория с учётом версии OpenWrt и целевой платформы.
 		FEED="https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}"
@@ -155,39 +153,47 @@ if [ "$NODEPS" = 0 ]; then
 			sed -i '\#2grey\.github\.io/awg-openwrt#d' "$CF" ||
      		    die "Не удалось удалить старый фид AmneziaWG"
 		fi
+		#--------------------------------------------------------------------------------------------------------
 		# Формируем адрес репозитория и добавляем его в конец файла, не удаляя существующие записи.
-		printf 'src/gz awg-openwrt %s\n' "$FEED" >> "$CF" ||
+		printf 'src/gz awg %s\n' "$FEED" >> "$CF" ||
    		    die "Не удалось добавить фид AmneziaWG"
 		ok "Фид AmneziaWG добавлен для OpenWrt $DISTRIB_RELEASE"
-
+  		#--------------------------------------------------------------------------------------------------------
+		# Добавления ключа
+		if wget -q -O /tmp/awg-openwrt-feed.pub "https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"; then
+			if opkg-key add /tmp/awg-openwrt-feed.pub; then
+       			ok "Ключ репозитория AmneziaWG добавлен"
+   			else
+       			rm -f /tmp/awg-openwrt-feed.pub
+       			die "Не удалось добавить ключ репозитория AmneziaWG"
+   			fi
+			rm -f /tmp/awg-openwrt-feed.pub
+		else
+			die "Не скачался ключ фида 2Grey — проверьте интернет. Инструкция: https://github.com/2Grey/awg-openwrt"
+		fi
+		#--------------------------------------------------------------------------------------------------------
 		if [ -f /lib/netifd/proto/amneziawg.sh ] && [ -x /usr/bin/awg ]; then
 			ok "AmneziaWG уже установлен ($(opkg list-installed 2>/dev/null | grep '^amneziawg-tools ' | cut -d' ' -f2))"
 		elif [ -f /lib/netifd/proto/amneziawg3.sh ]; then
 			ok "Найден amneziawg3 — буду использовать его"
 		else
 			warn "Ставлю AmneziaWG из фида 2Grey/awg-openwrt"
-			mkdir -p /etc/opkg/keys
-			# usign-ключ фида: имя файла — ID ключа (проверьте на странице репозитория)
-			if wget -q -O wget -O /tmp/awg-openwrt-feed.pub "https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"; then
-				opkg-key add /tmp/awg-openwrt-feed.pub
-				rm -f /tmp/awg-openwrt-feed.pub
-				opkg update > /tmp/awgsplit-awg.log 2>&1
-				opkg install amneziawg-tools kmod-amneziawg luci-proto-amneziawg >> /tmp/awgsplit-awg.log 2>&1
-				tail -5 /tmp/awgsplit-awg.log
-				if pkg_installed kmod-amneziawg && pkg_installed amneziawg-tools; then
-					opkg install luci-i18n-amneziawg-ru >/dev/null 2>&1
-					ok "AmneziaWG установлен"
-					warn "После установки нужна перезагрузка роутера, чтобы сеть узнала новый протокол"
-					NEED_REBOOT=1
-				else
-					warn "Не получилось поставить AmneziaWG (нет пакетов под $DISTRIB_RELEASE/$DISTRIB_TARGET?)"
-					warn "Инструкция: https://github.com/2Grey/awg-openwrt"
-				fi
-			else
-				warn "Не скачался ключ фида 2Grey — проверьте интернет. Инструкция: https://github.com/2Grey/awg-openwrt"
-			fi
-		fi
-
+			if ! opkg update > /tmp/awgsplit-awg.log 2>&1; then
+        		cat /tmp/awgsplit-awg.log
+        		die "Не удалось обновить списки пакетов"
+    		fi
+			if opkg install amneziawg-tools kmod-amneziawg luci-proto-amneziawg >> /tmp/awgsplit-awg.log 2>&1; then
+        		ok "Пакеты AmneziaWG установлены"
+				opkg install luci-i18n-amneziawg-ru >/dev/null 2>&1
+				warn "После установки нужна перезагрузка роутера, чтобы сеть узнала новый протокол"
+				NEED_REBOOT=1
+    		else
+				warn "Нет пакетов под ${DISTRIB_RELEASE}/${DISTRIB_TARGET}?"
+				warn "Инструкция: https://github.com/2Grey/awg-openwrt"
+				cat /tmp/awgsplit-awg.log
+        		die "Не удалось установить пакеты AmneziaWG"
+    		fi
+			tail -5 /tmp/awgsplit-awg.log
 	else
 		echo "без AmneziaWG"
 	fi
