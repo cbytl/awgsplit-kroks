@@ -25,9 +25,9 @@ ok "OpenWrt $DISTRIB_RELEASE / $DISTRIB_TARGET"
 command -v opkg >/dev/null 2>&1 || die "opkg не найден: эта версия установщика для OpenWrt 24.10"
 [ -f files/usr/bin/awgsplit ] || die "Запускайте install.sh из распакованной папки awgsplit"
 
-# Папка для бэкапа
+# Задаём постоянный каталог для резервных копий
 BK=/root/awgsplit-backup
-mkdir -p "$BK"
+mkdir -p "$BK" || die "Не удалось создать каталог резервных копий $BK"
 
 # Функция has_nftset() проверяет, поддерживает ли установленный dnsmasq функцию nftset.
 has_nftset() {
