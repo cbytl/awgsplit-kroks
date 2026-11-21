@@ -63,7 +63,7 @@ ask_yn() {
 if [ "$NODEPS" = 0 ]; then
 	
 	step "opkg update — обновляем списки доступных пакетов. Это займет некоторое время. Подождите....."
-		opkg update || warn "opkg update прошёл с ошибками — пробую дальше"
+		opkg update || die "opkg update прошёл с ошибками — пробую дальше"
 	
 	step "dnsmasq-full"
 	DHCP="/etc/config/dhcp"
@@ -161,6 +161,7 @@ if [ "$NODEPS" = 0 ]; then
   		#--------------------------------------------------------------------------------------------------------
 		# Добавления ключа
 		if wget -q -O /tmp/awg-openwrt-feed.pub "https://2grey.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"; then
+			[ -s /tmp/awg-openwrt-feed.pub ] || die "Скачанный ключ AmneziaWG пустой"
 			if opkg-key add /tmp/awg-openwrt-feed.pub; then
        			ok "Ключ репозитория AmneziaWG добавлен"
    			else
