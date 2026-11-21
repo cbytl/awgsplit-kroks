@@ -1,5 +1,5 @@
 #!/bin/sh
-# Установщик awgsplit под opkg (OpenWrt 24.10).
+# Установщик awgsplit под opkg (Kroks KNdRt41R1 OpenWrt 24.10).
 # Запускать НА РОУТЕРЕ из распакованной папки.
 #   ./install-opkg.sh            — полная установка
 #   ./install-opkg.sh --no-deps  — только файлы, без установки пакетов
