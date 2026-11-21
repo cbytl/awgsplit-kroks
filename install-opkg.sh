@@ -195,6 +195,7 @@ if [ "$NODEPS" = 0 ]; then
         		die "Не удалось установить пакеты AmneziaWG"
     		fi
 			tail -5 /tmp/awgsplit-awg.log
+		fi
 	else
 		echo "без AmneziaWG"
 	fi
