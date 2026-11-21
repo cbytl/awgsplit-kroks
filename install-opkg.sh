@@ -51,10 +51,13 @@ pkg_installed() { opkg list-installed 2>/dev/null | grep -q "^$1 "; }
 
 # Функция ask_yn() запрашивает у пользователя ответ «да/нет» и возвращает код завершения в зависимости от ответа.
 ask_yn() {
-    printf "%s [y/n]: " "$1"
+    printf "%s [y/N]: " "$1"
     while true; do
         read -r answer || { echo; return 1; }
         answer=$(printf '%s' "$answer" | tr 'A-Z' 'a-z')
+
+        [ -z "$answer" ] && return 1
+
         case "$answer" in
             y|yes|да) return 0 ;;
             n|no|нет) return 1 ;;
