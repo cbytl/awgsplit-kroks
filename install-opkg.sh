@@ -81,7 +81,7 @@ if [ "$NODEPS" = 0 ]; then
     	# Сохраняем конфигурацию DNS
     	[ -f "${DNS}" ] || die "Не найден файл ${DNS}"
    		cp -p "${DNS}" "${DNS_BAK}" || die "Не удалось сохранить конфигурацию DNS"
-		ok "Конфигурация DHCP сохранена: ${DNS_BAK}"
+		ok "Конфигурация DNS сохранена: ${DNS_BAK}"
 	    # Запоминаем, был ли установлен обычный dnsmasq
  	   	DNSMASQ_OLD=0
  	   	if opkg list-installed 2>/dev/null | grep -q '^dnsmasq '; then
