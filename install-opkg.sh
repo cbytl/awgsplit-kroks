@@ -15,7 +15,6 @@ if [ -t 1 ] && [ -z "$NO_COLOR" ]; then
     GREEN='\033[0;32m'
     YELL='\033[0;33m'
     CYAN='\033[0;36m'
-    PURPLE='\033[0;35m'
     NC='\033[0m'
 fi
 
@@ -24,7 +23,7 @@ ok()   { printf "${GREEN}[OK]${NC}    %s\n" "$*"; }
 warn() { printf "${YELL}[!!!]${NC}   %s\n" "$*"; }
 err()  { printf "${RED}[ERR]${NC}   %s\n" "$*"; }
 info() { printf "${CYAN}[INFO]${NC}  %s\n" "$*"; }
-step() { printf "\n${PURPLE}=== %s ===${NC}\n" "$*"; }
+step() { printf "\n${CYAN}=== %s ===${NC}\n" "$*"; }
 die()  { err "$*"; exit 1; }
 
 NODEPS=0
