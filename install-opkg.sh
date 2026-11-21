@@ -63,7 +63,7 @@ ask_yn() {
 if [ "$NODEPS" = 0 ]; then
 	
 	step "opkg update — обновляем списки доступных пакетов. Это займет некоторое время. Подождите....."
-		opkg update >/dev/null 2>&1 || warn "opkg update прошёл с ошибками — пробую дальше"
+		opkg update || warn "opkg update прошёл с ошибками — пробую дальше"
 	
 	step "dnsmasq-full"
 	if has_nftset; then
