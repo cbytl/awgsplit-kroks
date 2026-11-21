@@ -75,6 +75,8 @@ if [ "$NODEPS" = 0 ]; then
 	step "dnsmasq-full"
 	DHCP="/etc/config/dhcp"
 	DHCP_BAK="${BK}/dhcp.before-dnsmasq-full"
+	DNS="/etc/resolv.conf"
+	DNS_BAK="${BK}/dns.before-dnsmasq-full"
 	# Проверяем, установлен ли dnsmasq-full
 	if opkg list-installed 2>/dev/null | grep -q '^dnsmasq-full '; then
 	    ok "dnsmasq-full уже установлен"
@@ -83,10 +85,14 @@ if [ "$NODEPS" = 0 ]; then
     	[ -f "${DHCP}" ] || die "Не найден файл ${DHCP}"
    		cp -p "${DHCP}" "${DHCP_BAK}" || die "Не удалось сохранить конфигурацию DHCP"
 		ok "Конфигурация DHCP сохранена: ${DHCP_BAK}"
+    	# Сохраняем конфигурацию DNS
+    	[ -f "${DNS}" ] || die "Не найден файл ${DNS}"
+   		cp -p "${DNS}" "${DNS_BAK}" || die "Не удалось сохранить конфигурацию DNS"
+		ok "Конфигурация DHCP сохранена: ${DNS_BAK}"
 	    # Запоминаем, был ли установлен обычный dnsmasq
  	   	DNSMASQ_OLD=0
  	   	if opkg list-installed 2>/dev/null | grep -q '^dnsmasq '; then
-  	      DNSMASQ_OLD=1
+  	      	DNSMASQ_OLD=1
  	   	fi
 	    # Заранее загружаем dnsmasq-full и его зависимости
  	   	if ! opkg install --download-only dnsmasq-full; then
@@ -102,6 +108,8 @@ if [ "$NODEPS" = 0 ]; then
 	    if opkg install dnsmasq-full && opkg list-installed 2>/dev/null | grep -q '^dnsmasq-full '; then
 	    	# Восстанавливаем конфигурацию DHCP
 	        cp -p "${DHCP_BAK}" "${DHCP}" || die "dnsmasq-full установлен, но не удалось восстановить DHCP"
+			# Восстанавливаем конфигурацию DNS
+	        cp -p "${DNS_BAK}" "${DNS}" || die "dnsmasq-full установлен, но не удалось восстановить DNS"
 	        if /etc/init.d/dnsmasq restart; then
 	            ok "dnsmasq-full успешно установлен и запущен"
 			else
@@ -113,7 +121,7 @@ if [ "$NODEPS" = 0 ]; then
     	    if [ "${DNSMASQ_OLD}" -eq 1 ]; then
 				warn "Пытаюсь восстановить обычный dnsmasq"
 	   	        if opkg install dnsmasq; then
-					if cp -p "${DHCP_BAK}" "${DHCP}" && /etc/init.d/dnsmasq restart; then
+					if cp -p "${DHCP_BAK}" "${DHCP}" && cp -p "${DNS_BAK}" "${DNS}" && /etc/init.d/dnsmasq restart; then
 						ok "Обычный dnsmasq восстановлен"
 					else
 						err "dnsmasq установлен, но восстановление конфигурации или запуск не удались"
@@ -126,13 +134,6 @@ if [ "$NODEPS" = 0 ]; then
 	    fi
 	fi
 
-	
-	
-	
-	
-	
-	
-	
 	# Проверяем наличие nftables и при необходимости устанавливаем пакет.
 	step "nftables"
 	if command -v nft >/dev/null 2>&1; then ok "nftables есть"
