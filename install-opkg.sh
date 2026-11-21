@@ -21,6 +21,7 @@ fi
 ok()   { printf "${GREEN}[OK]${NC}    %s\n" "$*"; }
 warn() { printf "${YELL}[!!!]${NC}   %s\n" "$*"; }
 err()  { printf "${RED}[ERR]${NC}   %s\n" "$*"; }
+info() { printf "${CYAN}[INFO]${NC}    %s\n" "$*"; }
 step() { printf "\n${CYAN}=== %s ===${NC}\n" "$*"; }
 die()  { err "$*"; exit 1; }
 
@@ -141,7 +142,7 @@ if [ "$NODEPS" = 0 ]; then
 
 	# Проверяем наличие AmneziaWG и при необходимости устанавливаем.
 	step "AmneziaWG"
-	ok "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
+	info "https://2grey.github.io/awg-openwrt/${DISTRIB_RELEASE}/${DISTRIB_TARGET}/packages"
 	if ask_yn "Установить AmneziaWG? "; then
 
 		# после sysupgrade в фиде 2Grey(/etc/opkg/customfeeds.conf) может остаться старая версия OpenWrt — чиним
