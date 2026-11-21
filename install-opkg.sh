@@ -180,10 +180,6 @@ if [ "$NODEPS" = 0 ]; then
 			ok "Найден amneziawg3 — буду использовать его"
 		else
 			warn "Ставлю AmneziaWG из фида 2Grey/awg-openwrt"
-			if ! opkg update > /tmp/awgsplit-awg.log 2>&1; then
-        		cat /tmp/awgsplit-awg.log
-        		die "Не удалось обновить списки пакетов"
-    		fi
 			if opkg install amneziawg-tools kmod-amneziawg luci-proto-amneziawg >> /tmp/awgsplit-awg.log 2>&1; then
         		ok "Пакеты AmneziaWG установлены"
 				opkg install luci-i18n-amneziawg-ru >/dev/null 2>&1
