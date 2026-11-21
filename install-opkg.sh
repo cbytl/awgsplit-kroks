@@ -268,8 +268,11 @@ step "Запуск"
 	fi
 	/etc/init.d/awgsplit enable && ok "Автозапуск включён"
 	/etc/init.d/awgsplit stop >/dev/null 2>&1
-	/etc/init.d/awgsplit start && ok "awgsplit запущен"
-
+	if /etc/init.d/awgsplit start; then
+    	ok "awgsplit запущен"
+	else
+    	die "Не удалось запустить awgsplit"
+	fi
 step "Готово"
 cat <<EOF
 
