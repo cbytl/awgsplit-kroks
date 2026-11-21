@@ -117,6 +117,7 @@ if [ "$NODEPS" = 0 ]; then
 
 	# conntrack: при переключении туннеля сбрасываем соединения сразу
 	# Проверяем наличие conntrack и при необходимости устанавливаем пакет.
+	step "conntrack"
 	if command -v conntrack >/dev/null 2>&1; then ok "conntrack есть"
 	elif opkg install conntrack >/dev/null 2>&1; then ok "conntrack поставлен"
 	else warn "Не смог поставить conntrack — не страшно, при переключении туннеля соединения переподключатся чуть дольше"; fi
