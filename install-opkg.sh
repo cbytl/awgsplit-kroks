@@ -266,13 +266,11 @@ step "Запуск"
 		/etc/init.d/dnsmasq restart >/dev/null 2>&1
 		warn "Убрал из dnsmasq остатки Podkop (сервер 127.0.0.42), копия dhcp в $BK"
 	fi
-	/etc/init.d/awgsplit enable && ok "Автозапуск включён"
+	/etc/init.d/awgsplit enable || die "Не удалось включить автозапуск AWG Split"
+	ok "Автозапуск включён"
 	/etc/init.d/awgsplit stop >/dev/null 2>&1
-	if /etc/init.d/awgsplit start; then
-    	ok "awgsplit запущен"
-	else
-    	die "Не удалось запустить awgsplit"
-	fi
+	/etc/init.d/awgsplit start ||  die "Не удалось запустить AWG Split"
+	ok "awgsplit запущен"
 step "Готово"
 cat <<EOF
 
