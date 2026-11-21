@@ -22,7 +22,6 @@ fi
 ok()   { printf "${GREEN}[OK]${NC}    %s\n" "$*"; }
 warn() { printf "${YELL}[!!!]${NC}   %s\n" "$*"; }
 err()  { printf "${RED}[ERR]${NC}   %s\n" "$*"; }
-info() { printf "${CYAN}[INFO]${NC}  %s\n" "$*"; }
 step() { printf "\n${CYAN}=== %s ===${NC}\n" "$*"; }
 die()  { err "$*"; exit 1; }
 
