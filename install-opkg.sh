@@ -7,8 +7,7 @@
 cd "$(dirname "$0")" || exit 1
 
 # Управляет цветным выводом сообщений в терминале.
-BLACK=''; RED=''; GREEN=''; YELL=''
-BLUE=''; PURPLE=''; CYAN=''; NC=''
+RED=''; GREEN=''; YELL=''; CYAN=''; NC=''
 
 if [ -t 1 ] && [ -z "$NO_COLOR" ]; then
     RED='\033[0;31m'
