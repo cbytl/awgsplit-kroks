@@ -1,3 +1,4 @@
+
 'use strict';
 'require view';
 'require form';
@@ -83,7 +84,7 @@ return view.extend({
 		var ifaces = Array.isArray(data[0]) ? data[0] : [];
 		var m, s, o;
 
-		m = new form.Map('awgsplit', 'Туннели',
+		m = new form.Map('awgsplit', 'Tunnels',
 			'Каждый туннель — отдельный интерфейс AmneziaWG со своей таблицей маршрутизации. ' +
 			'Домены и подсети из назначенных ему списков идут в этот туннель, всё остальное — напрямую через провайдера. ' +
 			'Если адрес подходит нескольким туннелям, порядок такой: свои подсети → свои домены → ' +
@@ -93,23 +94,23 @@ return view.extend({
 
 
 		// ------------------------------------------------ туннели
-		s = m.section(form.GridSection, 'tunnel', 'Туннели',
+		s = m.section(form.GridSection, 'tunnel', 'Tunnels',
 			'Имя новой секции — латиница, цифры и _, с буквы (например second).');
 		s.addremove = true;
 		s.anonymous = false;
 		s.nodescriptions = true;
-		s.addbtntitle = 'Добавить туннель';
+		s.addbtntitle = 'Add tunnel';
 
-		o = s.option(form.Flag, 'enabled', 'Вкл');
+		o = s.option(form.Flag, 'enabled', 'On');
 		o.editable = true;
 		o.default = '1';
 		o.rmempty = false;
 
-		o = s.option(form.Value, 'label', 'Название');
+		o = s.option(form.Value, 'label', 'Label');
 		o.placeholder = 'Основной VPN';
 		o.editable = true;
 
-		o = s.option(form.ListValue, 'interface', 'Интерфейс',
+		o = s.option(form.ListValue, 'interface', 'Interface',
 			'Интерфейс AmneziaWG. Создаётся на вкладке «Импорт конфига».');
 		var known = {};
 		ifaces.forEach(function(i) {
@@ -213,7 +214,7 @@ return view.extend({
 		};
 
 		// ------------------------------------------------ общие настройки
-		s = m.section(form.NamedSection, 'global', 'awgsplit', 'Общие настройки');
+		s = m.section(form.NamedSection, 'global', 'awgsplit', 'General Settings');
 		s.anonymous = true;
 		s.addremove = false;
 
