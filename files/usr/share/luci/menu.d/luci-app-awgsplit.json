@@ -34,7 +34,7 @@
 		"order": 30,
 		"action": {
 			"type": "view",
-			"path": "awgsplit/tunnels"
+			"path": "awgsplit/lists"
 		}
 	},
 
