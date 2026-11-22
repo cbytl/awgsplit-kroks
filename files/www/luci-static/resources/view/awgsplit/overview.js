@@ -28,7 +28,7 @@ var STATE = {
 	pending: [ '#f39c12', 'Подключается' ],
 	unknown: [ '#7f8c8d', 'Нет данных' ],
 	down:    [ '#e74c3c', 'Нет связи' ],
-	nodev:   [ '#e74c3c', 'Интерфейс не поднят' ]
+	nodev:   [ '#ff0000', 'Интерфейс не поднят' ]
 };
 
 // Все строки из бэкенда передаются в E() только массивом — так они вставляются как текст, а не HTML
@@ -176,10 +176,29 @@ return view.extend({
 		}, 10);
 
 		return E('div', {}, [
-			E('h2', {}, txt('AWG Split — раздельная маршрутизация')),
+			E('div', {
+				'style': 'display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:15px;'
+			}, [
+				E('h2', { 'style': 'margin:15px 0 0 0' }, txt('Status')),
+
+				E('div', { 'class': 'cbi-page-actions', 'style': 'margin:0' }, [
+					E('button', {
+						'class': 'btn cbi-button-apply',
+						'click': ui.createHandlerFn(this, 'handleRestart')
+					}, txt('Перезапустить службу')),
+					' ',
+					E('button', {
+						'class': 'btn cbi-button-action',
+						'click': ui.createHandlerFn(this, 'handleUpdate')
+					}, txt('Обновить списки'))
+				])
+			]),
+
 			E('p', { 'style': 'color:#888' },
 				txt('Сайты из списков идут через туннели AmneziaWG, всё остальное — напрямую через провайдера.')),
+
 			box,
+			
 			E('div', { 'class': 'cbi-section' }, [
 				E('h3', {}, txt('Как это работает')),
 				E('p', {}, txt(
@@ -189,18 +208,8 @@ return view.extend({
 				E('p', { 'style': 'color:#888' }, txt(
 					'«IP из DNS» растёт по мере того, как устройства открывают сайты. Если там 0 — устройства ' +
 					'ещё не обращались к доменам из списков или их DNS идёт мимо роутера (DoH в браузере, свой DNS в настройках).'))
-			]),
-			E('div', { 'class': 'cbi-page-actions' }, [
-				E('button', {
-					'class': 'btn cbi-button-apply',
-					'click': ui.createHandlerFn(this, 'handleRestart')
-				}, txt('Перезапустить службу')),
-				' ',
-				E('button', {
-					'class': 'btn cbi-button-action',
-					'click': ui.createHandlerFn(this, 'handleUpdate')
-				}, txt('Обновить списки'))
 			])
+
 		]);
 	},
 
