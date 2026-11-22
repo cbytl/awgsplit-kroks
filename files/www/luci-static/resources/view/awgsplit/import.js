@@ -91,9 +91,12 @@ return view.extend({
 							'maxlength': '15',
 							'placeholder': 'awg_main'
 						}),
-						E('div', { 'class': 'cbi-value-description' }, txt(
-							'Основной сервер — awg_main, второй — awg_second: такие имена уже прописаны в туннелях. ' +
-							'Повторный импорт с тем же именем заменит настройки интерфейса.'))
+						E('div', { 'class': 'cbi-value-description' },
+              				txt('Например awg_main, awg_second и т.д. Такие имена уже прописаны в туннелях.')
+            			),
+            			E('div', {
+              				'style': 'color: #ff0000 !important; font-weight: bold;'
+            			}, txt('Повторный импорт с тем же именем заменит настройки интерфейса.'))
 					])
 				]),
 				E('div', { 'class': 'cbi-value' }, [
