@@ -99,6 +99,19 @@ return view.extend({
 		s.anonymous = false;
 		s.nodescriptions = true;
 		s.addbtntitle = 'Add tunnel';
+    
+		var renderSectionAdd = s.renderSectionAdd;
+
+		s.renderSectionAdd = function(extra_class) {
+			var el = renderSectionAdd.call(this, extra_class);
+			var input = el.querySelector('.cbi-section-create-name');
+			if (input) {
+				input.value = 'new_tunnel_1';
+				input.dispatchEvent(new Event('keyup'));
+			}
+		return el;
+		};
+
 
 		o = s.option(form.Flag, 'enabled', 'On');
 		o.editable = true;
