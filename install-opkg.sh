@@ -213,7 +213,7 @@ put 0755 files/usr/share/awgsplit/import-awg.sh  /usr/share/awgsplit/import-awg.
 put 0755 files/usr/libexec/rpcd/luci.awgsplit    /usr/libexec/rpcd/luci.awgsplit
 put 0644 files/usr/share/rpcd/acl.d/luci-app-awgsplit.json /usr/share/rpcd/acl.d/luci-app-awgsplit.json
 put 0644 files/usr/share/luci/menu.d/luci-app-awgsplit.json /usr/share/luci/menu.d/luci-app-awgsplit.json
-for f in overview tunnels import diag; do
+for f in overview tunnels lists import diag; do
 	put 0644 "files/www/luci-static/resources/view/awgsplit/$f.js" "/www/luci-static/resources/view/awgsplit/$f.js"
 done
 put 0644 files/www/awgsplit-down.html            /www/awgsplit-down.html
